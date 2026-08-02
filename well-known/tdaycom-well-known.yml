@@ -1,0 +1,26 @@
+generated: '2026-07-21'
+method: searched
+source: live probe of https://tday.com/.well-known/
+host: https://tday.com
+documents:
+- path: /.well-known/oauth-authorization-server
+  status: 200
+  file: tdaycom-oauth-authorization-server.json
+  standard: RFC 8414
+  note: OAuth 2.0 Authorization Server Metadata for the tday MCP server.
+- path: /.well-known/oauth-protected-resource
+  status: 200
+  file: tdaycom-oauth-protected-resource.json
+  standard: RFC 9728
+  note: OAuth 2.0 Protected Resource Metadata; resource is https://tday.com/api/mcp.
+- path: /.well-known/security.txt
+  status: 404
+  standard: RFC 9116
+- path: /.well-known/openid-configuration
+  status: 404
+  standard: OpenID Connect Discovery
+- path: /.well-known/api-catalog
+  status: 404
+  standard: RFC 9727
+- path: /.well-known/ai-plugin.json
+  status: 404

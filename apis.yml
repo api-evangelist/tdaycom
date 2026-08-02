@@ -1,7 +1,18 @@
 aid: tdaycom
 name: Tdaycom
-description: Tdaycom is a company surfaced as a portfolio company of y-combinator and added to the API
-  Evangelist network as a stub for enrichment. This profile is a lead awaiting the enrichment pipeline.
+description: >-
+  tday (tday.com) is a Y Combinator-backed (Spring 2026) AI platform that turns a
+  software product into on-brand marketing content. It connects to a company's GitHub
+  repository or live website, and on every release automatically produces a launch
+  package — an end-to-end demo video generated from real product flows, feature
+  showcases, and on-brand social graphics and ads — then publishes that creative to
+  social and ad channels and measures how it performs, closing the loop from what a
+  team ships to what it posts. tday operates through the browser like a user, with no
+  SDK embedded in the customer's product, using isolated per-run workspaces, scoped
+  repository access, secure credential storage, and secret redaction. tday exposes a
+  hosted Model Context Protocol (MCP) server at https://tday.com/api/mcp secured with
+  OAuth 2.1 (PKCE, dynamic client registration, RFC 8414 / RFC 9728 discovery), making
+  it the agent-facing surface of the platform.
 url: https://raw.githubusercontent.com/api-evangelist/tdaycom/refs/heads/main/apis.yml
 x-type: company
 x-source: vc-portfolio
@@ -9,14 +20,76 @@ x-backed-by:
 - y-combinator
 x-tier: stub
 x-tier-reason: portfolio-lead
+accessModel:
+  pricing: unknown
+  onboarding: self-serve
+  trial: false
+  try_now: false
+  public: false
+  label: Self-serve signup
+  confidence: medium
+  source:
+  - authentication
+  generated: '2026-07-22'
+  method: derived
 specificationVersion: '0.20'
 created: '2026-07-17'
-modified: '2026-07-17'
+modified: '2026-07-21'
 tags:
 - Company
-apis: []
+- Marketing
+- Artificial Intelligence
+- Content Generation
+- Video
+- Social Media
+- Developer Tools
+- MCP
+- Agents
+- Y Combinator
+image: https://tday.com/favicon.ico
+apis:
+- name: tday MCP Server
+  description: >-
+    Hosted Model Context Protocol (MCP) server for tday, exposed at
+    https://tday.com/api/mcp and secured with OAuth 2.1 (authorization_code + PKCE,
+    dynamic client registration, single "tday" scope). It is the agent-facing entry
+    point to the tday marketing-content platform. RFC 8414 authorization-server and
+    RFC 9728 protected-resource metadata are published under /.well-known/.
+  humanURL: https://tday.com
+  baseURL: https://tday.com/api/mcp
+  properties:
+  - type: MCPServer
+    url: mcp/tdaycom-mcp.yml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
+common:
+- type: DomainSecurity
+  url: security/tdaycom-domain-security.yml
+- type: Website
+  url: https://tday.com
+- type: Login
+  url: https://tday.com/login
+- type: Support
+  url: https://tday.com/book
+- type: PrivacyPolicy
+  url: https://tday.com/privacy
+- type: TermsOfService
+  url: https://tday.com/terms
+- type: MCPServer
+  url: mcp/tdaycom-mcp.yml
+- type: WellKnown
+  url: well-known/tdaycom-well-known.yml
+- type: Authentication
+  url: authentication/tdaycom-authentication.yml
+- type: OAuthScopes
+  url: scopes/tdaycom-scopes.yml
+- type: LLMsTxt
+  url: llms/tdaycom-llms.txt
+x-enrichment:
+  date: '2026-07-21'
+  status: enriched
+  artifacts_added: 8
+  pass: local-v1

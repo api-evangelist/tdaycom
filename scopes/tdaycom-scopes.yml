@@ -1,0 +1,22 @@
+generated: '2026-07-21'
+method: searched
+source: https://tday.com/.well-known/oauth-authorization-server
+docs: https://tday.com/.well-known/oauth-protected-resource
+schemes:
+- name: OAuth2
+  source: https://tday.com/.well-known/oauth-authorization-server
+  flows:
+  - flow: authorizationCode
+    authorizationUrl: https://tday.com/api/mcp/oauth/authorize
+    tokenUrl: https://tday.com/api/mcp/oauth/token
+    pkce: S256
+scopes:
+- scope: tday
+  description: >-
+    Single coarse-grained scope granting an OAuth client access to the tday MCP
+    server (https://tday.com/api/mcp). tday does not (publicly) document finer-grained
+    scopes; this is the only value advertised in scopes_supported.
+  flows:
+  - authorizationCode
+  sources:
+  - well-known/tdaycom-oauth-authorization-server.json

@@ -1,0 +1,34 @@
+generated: '2026-07-21'
+method: searched
+source: https://tday.com/.well-known/oauth-authorization-server
+docs: https://tday.com/.well-known/oauth-protected-resource
+summary:
+  types:
+  - oauth2
+  oauth2_flows:
+  - authorizationCode
+  api_key_in: []
+  note: >-
+    tday has no published OpenAPI; this profile is derived from its live OAuth 2.1
+    discovery metadata (RFC 8414 authorization-server + RFC 9728 protected-resource).
+schemes:
+- name: OAuth2
+  type: oauth2
+  flow: authorizationCode
+  pkce: S256
+  dynamic_client_registration: true
+  public_client: true
+  token_endpoint_auth_methods_supported:
+  - none
+  authorization_server: https://tday.com
+  authorization_endpoint: https://tday.com/api/mcp/oauth/authorize
+  token_endpoint: https://tday.com/api/mcp/oauth/token
+  registration_endpoint: https://tday.com/api/mcp/oauth/register
+  revocation_endpoint: https://tday.com/api/mcp/oauth/revoke
+  scopes:
+  - tday
+  protects:
+  - https://tday.com/api/mcp
+  sources:
+  - well-known/tdaycom-oauth-authorization-server.json
+  - well-known/tdaycom-oauth-protected-resource.json

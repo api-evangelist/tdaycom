@@ -1,0 +1,37 @@
+generated: '2026-07-21'
+method: searched
+source: https://tday.com/.well-known/oauth-protected-resource
+status: published
+server:
+  name: tday
+  transport: http
+  url: https://tday.com/api/mcp
+  resource_name: tday
+  description: >-
+    Official hosted Model Context Protocol server for the tday AI marketing-content
+    platform. It is the agent-facing surface of tday, secured with OAuth 2.1. The
+    endpoint returns HTTP 401 (Unauthorized) to unauthenticated requests, so the tool
+    list is not publicly enumerable; the OAuth discovery documents below are published
+    openly and confirm a live, standards-compliant remote MCP server.
+auth:
+  type: oauth2
+  scheme: authorization_code
+  pkce: S256
+  dynamic_client_registration: true
+  token_endpoint_auth_methods_supported:
+  - none
+  scopes:
+  - tday
+  authorization_server: https://tday.com
+  authorization_endpoint: https://tday.com/api/mcp/oauth/authorize
+  token_endpoint: https://tday.com/api/mcp/oauth/token
+  registration_endpoint: https://tday.com/api/mcp/oauth/register
+  revocation_endpoint: https://tday.com/api/mcp/oauth/revoke
+  protected_resource_metadata: https://tday.com/.well-known/oauth-protected-resource
+  authorization_server_metadata: https://tday.com/.well-known/oauth-authorization-server
+tools: []
+notes: >-
+  Tools require a valid OAuth bearer token (scope "tday") and could not be listed
+  during discovery. No OpenAPI is published for tday, so a candidate tool list cannot
+  be derived. Discovery confirmed the server, transport (streamable HTTP at
+  /api/mcp), and its complete OAuth 2.1 authorization surface.
