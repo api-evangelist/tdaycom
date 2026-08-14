@@ -1,18 +1,22 @@
 aid: tdaycom
 name: Tdaycom
 description: >-
-  tday (tday.com) is a Y Combinator-backed (Spring 2026) AI platform that turns a
-  software product into on-brand marketing content. It connects to a company's GitHub
-  repository or live website, and on every release automatically produces a launch
-  package — an end-to-end demo video generated from real product flows, feature
-  showcases, and on-brand social graphics and ads — then publishes that creative to
-  social and ad channels and measures how it performs, closing the loop from what a
-  team ships to what it posts. tday operates through the browser like a user, with no
-  SDK embedded in the customer's product, using isolated per-run workspaces, scoped
-  repository access, secure credential storage, and secret redaction. tday exposes a
-  hosted Model Context Protocol (MCP) server at https://tday.com/api/mcp secured with
-  OAuth 2.1 (PKCE, dynamic client registration, RFC 8414 / RFC 9728 discovery), making
-  it the agent-facing surface of the platform.
+  tday (tday.com) is a Y Combinator-backed (Spring 2026) AI platform, operated by
+  Altacomm Technologies Pty. Ltd. of Adelaide, South Australia, that turns what a
+  software team ships into on-brand creative. It connects to a company's GitHub
+  repository or drives a live site through the browser like a user, and on every release
+  produces a launch package — an end-to-end demo video recorded from real product flows,
+  a promotional feature showcase, and on-brand social graphics — then publishes that
+  creative to social channels and measures how it performs. A second surface generates
+  brand-aware still designs from a text prompt against a stored brand, where a brand is
+  created from a website URL and its colors, fonts and logos are extracted automatically.
+  tday operates with no SDK embedded in the customer's product, using isolated per-run
+  workspaces and database branches, scoped repository access, secure credential storage,
+  and secret redaction. Its developer surface is agent-shaped rather than REST-shaped:
+  tday publishes no OpenAPI, and instead ships a hosted Model Context Protocol server at
+  https://tday.com/api/mcp secured with OAuth 2.1 (PKCE, dynamic client registration,
+  RFC 8414 / RFC 9728 discovery), a local stdio MCP server distributed on npm as
+  @designtday/mcp, and five of its own packaged agent skills.
 url: https://raw.githubusercontent.com/api-evangelist/tdaycom/refs/heads/main/apis.yml
 x-type: company
 x-source: vc-portfolio
@@ -34,32 +38,40 @@ accessModel:
   method: derived
 specificationVersion: '0.20'
 created: '2026-07-17'
-modified: '2026-07-21'
+modified: '2026-08-13'
 tags:
 - Company
 - Marketing
 - Artificial Intelligence
 - Content Generation
+- Design
 - Video
 - Social Media
 - Developer Tools
 - MCP
 - Agents
 - Y Combinator
-image: https://tday.com/favicon.ico
+image: https://tday.com/logo.svg
 apis:
 - name: tday MCP Server
   description: >-
-    Hosted Model Context Protocol (MCP) server for tday, exposed at
-    https://tday.com/api/mcp and secured with OAuth 2.1 (authorization_code + PKCE,
-    dynamic client registration, single "tday" scope). It is the agent-facing entry
-    point to the tday marketing-content platform. RFC 8414 authorization-server and
-    RFC 9728 protected-resource metadata are published under /.well-known/.
-  humanURL: https://tday.com
+    Model Context Protocol server for tday, and the agent-facing entry point to the
+    platform. It ships in two deployments that front the same nine tools: a hosted
+    remote endpoint at https://tday.com/api/mcp, added through an MCP client's custom
+    connector flow and secured with OAuth 2.1 (authorization_code + PKCE, dynamic
+    client registration, single "tday" scope); and a local stdio server installed with
+    `npx -y @designtday/mcp install`, which links a machine to a tday account through a
+    loopback browser flow. Tools cover account/credit lookup, brand create/list/get,
+    design list/get, asynchronous design generation with polling, and local image
+    download. RFC 8414 authorization-server and RFC 9728 protected-resource metadata are
+    published under /.well-known/.
+  humanURL: https://tday.com/mcp
   baseURL: https://tday.com/api/mcp
   properties:
   - type: MCPServer
     url: mcp/tdaycom-mcp.yml
+  - type: ToolCrosswalk
+    url: mcp/tdaycom-tool-crosswalk.yml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
@@ -70,26 +82,58 @@ common:
   url: security/tdaycom-domain-security.yml
 - type: Website
   url: https://tday.com
+- type: Documentation
+  url: https://tday.com/mcp
 - type: Login
   url: https://tday.com/login
+- type: SignUp
+  url: https://tday.com/signup
 - type: Support
-  url: https://tday.com/book
+  url: https://tday.com/support
+- type: Pricing
+  url: https://tday.com/pricing
+- type: ChangeLog
+  url: https://tday.com/changelog
 - type: PrivacyPolicy
   url: https://tday.com/privacy
 - type: TermsOfService
   url: https://tday.com/terms
 - type: MCPServer
   url: mcp/tdaycom-mcp.yml
+- type: ToolCrosswalk
+  url: mcp/tdaycom-tool-crosswalk.yml
+- type: AgentSkill
+  url: skills/_index.yml
 - type: WellKnown
   url: well-known/tdaycom-well-known.yml
 - type: Authentication
   url: authentication/tdaycom-authentication.yml
 - type: OAuthScopes
   url: scopes/tdaycom-scopes.yml
+- type: Packages
+  url: packages/tdaycom-packages.yml
+- type: CLI
+  url: cli/tdaycom-cli.yml
+- type: Conventions
+  url: conventions/tdaycom-conventions.yml
+- type: ErrorCatalog
+  url: errors/tdaycom-problem-types.yml
+- type: RateLimits
+  url: rate-limits/tdaycom-rate-limits.yml
+- type: DataModel
+  url: data-model/tdaycom-data-model.yml
+- type: Conformance
+  url: conformance/tdaycom-conformance.yml
+- type: Lifecycle
+  url: lifecycle/tdaycom-lifecycle.yml
+- type: ChangeLog
+  url: changelog/tdaycom-changelog.yml
+- type: Plans
+  url: plans/tdaycom-plans-pricing.yml
 - type: LLMsTxt
   url: llms/tdaycom-llms.txt
 x-enrichment:
-  date: '2026-07-21'
+  date: '2026-08-13'
   status: enriched
-  artifacts_added: 8
+  artifacts_added: 18
   pass: local-v1
