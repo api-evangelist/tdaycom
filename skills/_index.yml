@@ -1,0 +1,60 @@
+generated: '2026-08-13'
+method: searched
+source: https://www.npmjs.com/package/@designtday/mcp (dist/installer-slash-command.js, v0.0.1)
+note: >-
+  These are NOT skills authored by API Evangelist. They are the provider's own agent
+  instructions, shipped verbatim inside tday's first-party npm package
+  @designtday/mcp and written to ~/.claude/commands by `npx -y @designtday/mcp
+  install`. Each file below is copied byte-for-byte out of that package. They are
+  packaged as Claude Code slash commands, and the frontmatter (name + description)
+  is tday's own.
+api: tday MCP Server
+mcp_endpoint: https://tday.com/api/mcp
+package: '@designtday/mcp'
+package_version: 0.0.1
+skills:
+- name: tday
+  file: tdaycom-tday.md
+  description: Interact with your tday.com account. Generate designs, manage brands, check credits.
+  slash_command: /tday
+  tools:
+  - tday_whoami
+  - tday_list_brands
+  - tday_get_brand
+  - tday_create_brand
+  - tday_list_designs
+  - tday_get_design
+  - tday_generate_design
+  - tday_poll_generation
+  - tday_download_image
+- name: tday-design
+  file: tdaycom-tday-design.md
+  description: Generate a design with tday.com. Pass a brand name and prompt, or just start and you'll be asked.
+  slash_command: /tday-design
+  tools:
+  - tday_list_brands
+  - tday_generate_design
+  - tday_poll_generation
+  - tday_download_image
+- name: tday-brand
+  file: tdaycom-tday-brand.md
+  description: Create a brand from a URL, list your brands, or view brand details.
+  slash_command: /tday-brand
+  tools:
+  - tday_list_brands
+  - tday_get_brand
+  - tday_create_brand
+- name: tday-credits
+  file: tdaycom-tday-credits.md
+  description: Check your tday.com plan, credit balance, and usage.
+  slash_command: /tday-credits
+  tools:
+  - tday_whoami
+- name: tday-ideas
+  file: tdaycom-tday-ideas.md
+  description: Brainstorm design ideas for a brand, then generate the one you pick.
+  slash_command: /tday-ideas
+  tools:
+  - tday_list_brands
+  - tday_get_brand
+skill_count: 5

@@ -1,0 +1,61 @@
+generated: '2026-08-13'
+method: searched
+source: https://www.npmjs.com/package/@designtday/mcp
+docs: https://tday.com/mcp
+name: tday
+summary: >-
+  tday ships one first-party command-line tool, distributed as the npm package
+  @designtday/mcp. It is primarily an MCP server and installer, but it also exposes a
+  one-shot `call` subcommand that invokes the same tool handlers directly, which makes
+  it a usable CLI for non-MCP integrations and smoke tests.
+binaries:
+- mcp
+- tday
+install:
+- method: npx
+  command: npx -y @designtday/mcp install
+  primary: true
+- method: bunx
+  command: bunx @designtday/mcp install
+- method: pnpm
+  command: pnpm dlx @designtday/mcp install
+- method: curl
+  command: curl -fsSL https://tday.com/install.sh | bash
+commands:
+- command: install
+  description: >-
+    Opens tday.com in the browser, signs the user in, links this machine to their tday
+    account, writes ~/.tday/config.json with 0600 permissions, patches Claude Code /
+    Cursor / Gemini CLI MCP config, prints a TOML block for Codex, and writes five
+    slash commands into ~/.claude/commands.
+- command: serve
+  description: Runs the MCP server over local stdio transport. This is the command an MCP client is configured with.
+- command: call
+  description: >-
+    One-shot invocation of a single tool handler for non-MCP integrations and smoke
+    tests. Takes a tool name and a JSON argument object.
+  examples:
+  - npx -y @designtday/mcp call tday_whoami '{}'
+  - npx -y @designtday/mcp call tday_list_brands '{"limit":10,"response_format":"markdown"}'
+configuration:
+  config_file: ~/.tday/config.json
+  file_mode: '0600'
+  env:
+  - name: TDAY_TOKEN
+    description: Bearer token; when set it bypasses the config file entirely.
+  - name: TDAY_API_URL
+    description: API base URL override. Defaults to https://tday.com. A trailing /api is stripped because tool handlers pass full /api/... paths.
+  - name: TDAY_WEB_URL
+    description: Web base URL override, used to build editor links. Defaults to https://tday.com.
+  - name: TDAY_PM
+    description: Package manager override for install.sh (bun|pnpm|npm). A legacy MARKUP_PM is also accepted.
+slash_commands:
+- /tday
+- /tday-design
+- /tday-brand
+- /tday-credits
+- /tday-ideas
+note: >-
+  A separate Slack surface exists and is documented at https://tday.com/support, with
+  `/markup help` and `/markup health` slash commands. It is a Slack app, not a
+  terminal CLI, so it is recorded here only as a cross-reference.

@@ -1,0 +1,51 @@
+generated: '2026-08-13'
+method: searched
+source: https://tday.com/changelog
+sources:
+- https://tday.com/changelog
+- https://tday.com/news
+- https://tday.com/terms
+- '@designtday/mcp v0.0.1 (npm)'
+summary: >-
+  tday publishes no versioning policy, no deprecation policy, no SLA and no status page.
+  It does ship the two pages that would carry release history — a changelog and a
+  newsroom — but both are empty templates. No StatusPage or Deprecation pointer is
+  emitted, because neither surface exists.
+versioning:
+  policy_published: false
+  scheme: mixed / undocumented
+  evidence: >-
+    One route carries a version segment (POST /api/v1/generate); /api/brands,
+    /api/designs and /api/billing/info are unversioned. No version header, no dated
+    version scheme, no policy page.
+deprecation:
+  policy_published: false
+  sunset_header: false
+  deprecation_header: false
+  rfc8594: false
+  evidence: No deprecation or sunset policy is published, and no deprecated operations are declared anywhere on the surface.
+sla:
+  published: false
+  uptime_target: null
+  evidence: No SLA page. https://tday.com/terms is a standard ToS with no availability commitment surfaced.
+status_page:
+  published: false
+  url: null
+  evidence: >-
+    https://tday.com/status -> 404 and status.tday.com does not resolve (probed
+    2026-08-13). No statuspage.io, Instatus, Better Stack or similar property was found.
+changelog:
+  published: true
+  url: https://tday.com/changelog
+  entries: 0
+  evidence: 'Page returns 200 and renders the empty state: "No updates published yet."'
+  see: changelog/tdaycom-changelog.yml
+release_evidence:
+  - surface: npm @designtday/mcp
+    last_release: '2026-05-07'
+    note: >-
+      The only dated release signal tday publishes anywhere. The package has not been
+      republished in the three months since, while the hosted MCP endpoint it pairs with
+      is live — and its `latest` dist-tag points at 0.0.1, a LOWER version than the
+      0.1.0/0.1.1 published forty minutes earlier the same day.
+deprecated_operations: []

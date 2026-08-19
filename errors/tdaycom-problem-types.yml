@@ -1,0 +1,82 @@
+generated: '2026-08-13'
+method: derived
+source: '@designtday/mcp v0.0.1 dist/tools.js formatHttpError() (npm)'
+format: vendor-json
+rfc9457: false
+envelope:
+  content_type: application/json
+  shape: '{"error": "<message>"}'
+  fields:
+  - name: error
+    description: Human-readable message. Read first by the first-party client.
+  - name: message
+    description: Fallback key when `error` is absent.
+  note: >-
+    No machine-readable error code, type URI or category is returned — only a string.
+    An agent cannot branch on anything but the HTTP status.
+note: >-
+  tday publishes no error reference page. This catalogue is derived from the status
+  switch in tday's own first-party MCP client, which carries tday-authored remediation
+  text for each status. The remediation strings below are tday's words, not ours.
+problem_types:
+- status: 400
+  title: Bad request
+  meaning: Tool or request arguments were rejected.
+  remediation: Check the tool arguments and retry with values returned by tday list/get tools.
+  retryable: false
+- status: 401
+  title: Unauthorized
+  meaning: The caller is not linked to a valid tday account, or the bearer token is missing/expired.
+  remediation: >-
+    Run `npx -y @designtday/mcp install` to sign in and relink the machine, restart the
+    AI agent, and retry tday_whoami. On the hosted endpoint the 401 carries
+    WWW-Authenticate: Bearer with an RFC 9728 resource_metadata pointer.
+  retryable: false
+- status: 403
+  title: Forbidden
+  meaning: The linked tday account does not have access to that resource.
+  remediation: Use tday_whoami to verify the account, then list brands/designs again.
+  retryable: false
+- status: 404
+  title: Not found
+  meaning: The referenced brand, design or generation does not exist for this account.
+  remediation: Check that the ID came from a tday_* list/get tool and belongs to the linked account.
+  retryable: false
+- status: 429
+  title: Rate limited or out of API credits
+  meaning: >-
+    Two different conditions share this status — the account's API credit balance is
+    exhausted, or its API rate-limit window is exhausted. The response does not say which.
+  remediation: >-
+    Run tday_whoami to inspect apiBalance, then buy API credits or wait for the
+    rate-limit window to reset.
+  retryable: true
+  note: No Retry-After or RateLimit-* header is published, so backoff timing is unguided.
+- status: 5xx
+  title: Server error
+  meaning: tday is temporarily unable to complete the request.
+  remediation: >-
+    Retry shortly. If a generation was already queued, keep polling with
+    tday_poll_generation rather than resubmitting — POST /api/v1/generate is not
+    idempotent and a resubmit bills again.
+  retryable: true
+client_side_errors:
+  note: >-
+    These are raised by the first-party client before or instead of an HTTP call, and an
+    agent will see them as tool errors.
+  types:
+  - condition: Invalid ID characters
+    message: 'Invalid {key}: must contain only letters, numbers, underscores, and hyphens'
+  - condition: Request timeout
+    message: 'tday request timed out after {30|120}s: {path}'
+  - condition: Not authenticated (no local token)
+    message: Not authenticated. Run `npx -y @designtday/mcp install` to link this MCP server to your tday account in the browser, then restart your AI agent.
+  - condition: Image host not on allowlist
+    message: Image host "{host}" is not allowed.
+  - condition: Non-HTTPS image URL
+    message: Image URL must use HTTPS (got {protocol})
+  - condition: Download target exists
+    message: File already exists. Choose a new filePath or pass overwrite:true.
+  - condition: Download target is a symlink or non-regular file
+    message: Refusing to write to a symbolic link. / Refusing to write because the target path exists and is not a regular file.
+error_count: 6

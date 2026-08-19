@@ -1,0 +1,91 @@
+generated: '2026-08-13'
+method: searched
+source: https://tday.com/pricing
+currency: USD
+billing_period: month
+plan_count: 3
+note: >-
+  READ THE CAVEAT BEFORE USING THESE NUMBERS. tday's own pricing page states, twice,
+  that the figures are not real: a footnote under the table reads "Pricing is
+  illustrative", and an FAQ entry on the same page titled "Why is the pricing
+  illustrative?" answers "Real cost depends on volume, resolution, and self-hosting. The
+  numbers here are placeholders." Every tier routes to "Book a call" rather than to
+  self-serve checkout. So tday publishes a pricing PAGE but not a purchasable price. The
+  tiers are recorded verbatim below with placeholder: true on the amounts.
+  Separately and inconsistently, the API/MCP surface is metered in credits — the
+  tday_whoami tool returns an `apiBalance` and tday's own agent instructions say "Top up
+  at https://tday.com/billing" — and none of that credit pricing is published anywhere.
+plans:
+- name: Starter
+  price: 500
+  currency: USD
+  billing_period: month
+  placeholder: true
+  tagline: Your first demos, on autopilot.
+  included:
+  - Up to 5 videos / month
+  - Auto-edit, captions, voiceover
+  - Your brand kit applied
+  - 1080p export
+  quota:
+    videos_per_month: 5
+  overage: undocumented
+  cta: Book a call
+  self_serve: false
+  note: A separate FAQ entry on the same page says "The Starter pilot is free, no card", which contradicts the $500/mo shown on the tier.
+- name: Growth
+  price: 1000
+  currency: USD
+  billing_period: month
+  placeholder: true
+  most_popular: true
+  tagline: Every demo, fresh as you ship.
+  included:
+  - Up to 20 videos / month
+  - Auto re-record on UI changes
+  - 4K + custom intro/outro
+  - Staging + prod
+  - 5 seats
+  quota:
+    videos_per_month: 20
+    seats: 5
+  overage: undocumented
+  cta: Book a call
+  self_serve: false
+  contract: month-to-month
+- name: Scale
+  price: null
+  price_label: Custom
+  currency: USD
+  billing_period: month
+  placeholder: true
+  tagline: Demos for the whole org.
+  included:
+  - Unlimited videos & seats
+  - Self-hosted recording agent
+  - SSO, audit logs, SOC 2
+  - API + CI re-record hooks
+  - Dedicated engineer
+  quota:
+    videos_per_month: unlimited
+    seats: unlimited
+  cta: Contact sales
+  self_serve: false
+  contract: annual
+metering:
+  api_credits:
+    published: false
+    evidence: >-
+      tday_whoami returns apiBalance, freeTier, subscription and usageStats; a 429 from
+      the API is documented as "MCP/API generation uses the linked account's API credit
+      balance and API rate limit"; tday's /tday-credits skill points users to
+      https://tday.com/billing to top up. No credit price, no included allowance and no
+      per-generation cost is published on any public page.
+  free_tier:
+    published: partial
+    evidence: 'A `freeTier` field is returned by the account endpoint, and the pricing FAQ says "The Starter pilot is free, no card." No terms, limits or duration are published.'
+counting_rules:
+- question: How do you count a video?
+  answer: One finished, ship-ready cut of one flow. Re-recording it after a UI change doesn't count.
+- question: What happens when I outgrow a plan?
+  answer: Upgrade any time, prorated.

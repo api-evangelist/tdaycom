@@ -1,0 +1,1 @@
+{"resource":"https://tday.com/api/mcp","authorization_servers":["https://tday.com"],"bearer_methods_supported":["header"],"scopes_supported":["tday"],"resource_name":"tday"}

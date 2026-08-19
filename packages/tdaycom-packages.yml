@@ -1,0 +1,73 @@
+generated: '2026-08-13'
+method: searched
+source: https://registry.npmjs.org/@designtday/mcp
+docs: https://tday.com/mcp
+note: >-
+  One first-party package was found. Ownership is confirmed from tday's own surface,
+  not just from the package metadata: https://tday.com/mcp publishes the install
+  command `npx -y @designtday/mcp install` verbatim, https://tday.com/install.sh is
+  a tday-served bootstrap script that installs the same package, the npm `author` is
+  "tday.com" with homepage https://tday.com, and every tday social account is
+  @designtday. No PyPI, RubyGems, Maven Central, NuGet, crates.io, Packagist or
+  pkg.go.dev package for tday was found. tday publishes no language SDK — this is an
+  MCP server plus CLI installer, so no `SDKs` pointer is emitted.
+registries_searched:
+- npm
+- PyPI
+- RubyGems
+- crates.io
+- NuGet
+- Maven Central
+- pkg.go.dev
+- Packagist
+packages:
+- name: '@designtday/mcp'
+  registry: npm
+  url: https://www.npmjs.com/package/@designtday/mcp
+  official: true
+  language: javascript
+  kind: mcp-server
+  version: 0.0.1
+  published: '2026-05-07'
+  license: proprietary
+  install: npx -y @designtday/mcp install
+  bin:
+  - mcp
+  - tday
+  dependencies:
+  - '@modelcontextprotocol/sdk ^1.29.0'
+  - zod ^3.25.76
+  description: >-
+    Official local MCP server and installer for tday.com. Runs over local stdio,
+    drives a browser OAuth link flow, writes ~/.tday/config.json (0600), and
+    auto-configures Claude Code, Cursor and Gemini CLI (Codex gets a TOML block to
+    paste). Also installs five tday slash commands into ~/.claude/commands.
+  note: >-
+    Versioning is unusual and worth recording: npm shows 0.1.0 and 0.1.1 published
+    2026-05-07 05:30 and 06:01 UTC, then 0.0.1 published 2026-05-07 06:11 UTC and
+    tagged `latest`. The dist-tag therefore points at the LOWEST version number. The
+    package has not been republished since 2026-05-07 while the hosted MCP endpoint
+    it pairs with is live, so a consumer installing `@designtday/mcp@latest` gets a
+    three-month-old build.
+- name: install.sh
+  registry: cdn
+  url: https://tday.com/install.sh
+  official: true
+  language: shell
+  kind: bootstrap-script
+  version: null
+  published: null
+  install: curl -fsSL https://tday.com/install.sh | bash
+  description: >-
+    tday-hosted bootstrap script. Picks bun, pnpm or npm (overridable with TDAY_PM)
+    and hands off to `@designtday/mcp install`.
+  note: >-
+    version/published are null on purpose — this is an unpinned, tday-served script
+    with no registry metadata endpoint and no version string in its URL. A consumer
+    running the documented curl-pipe-bash line cannot tell which build they are
+    getting, and neither can we. The script itself pins nothing: it installs
+    `@designtday/mcp` at whatever npm currently tags `latest`. It carries a comment
+    noting a legacy `MARKUP_PM` environment variable "supported during migration",
+    the same `markup` lineage visible in tday's Slack `/markup` slash commands.
+package_count: 2
+official_count: 2

@@ -1,0 +1,142 @@
+generated: '2026-08-13'
+method: derived
+source: '@designtday/mcp v0.0.1 dist/tools.js output schemas + route shapes (npm)'
+note: >-
+  No OpenAPI and no object reference are published, so this graph is derived from the
+  output schemas and route shapes in tday's own first-party client. Every schema in that
+  package is `.passthrough()` — tday declares only the keys the client needs and lets
+  the rest through — so the entities below are REAL but their attribute lists are
+  necessarily incomplete. Attributes marked `named` appear explicitly in the package;
+  attributes described in prose on https://tday.com/mcp are marked `documented`.
+id_format:
+  pattern: '^[a-zA-Z0-9_-]+$'
+  prefixes: none-published
+  note: tday validates IDs against this character class client-side; no typed id-prefix scheme (like Stripe's `br_`/`ds_`) is published.
+entities:
+- name: Brand
+  description: >-
+    A customer brand. Created from a website URL, from which tday auto-extracts colors,
+    fonts and logos. Carries the brand knowledge that every generated design is matched
+    against.
+  routes:
+    list: GET /api/brands/summary
+    get: GET /api/brands/{brandId}
+    create: POST /api/brands
+  identifier: brandId
+  attributes:
+  - name: colors
+    provenance: documented
+  - name: logos
+    provenance: documented
+  - name: fonts
+    provenance: documented
+  - name: images
+    provenance: documented
+  - name: knowledge base
+    provenance: documented
+  - name: name
+    provenance: named
+  - name: description
+    provenance: named
+  - name: industry
+    provenance: named
+  - name: website
+    provenance: named
+  - name: reviewStatus
+    provenance: named
+    note: Returned on create; suggests brands can land in a review state before use.
+  - name: role
+    provenance: named
+    note: Returned alongside a brand on get — the caller's role on that brand, implying multi-user brand access.
+- name: Design
+  description: A design owned by the account. Holds one or more generations and can be archived.
+  routes:
+    list: GET /api/designs/summary
+    get: GET /api/designs/{designId}
+  identifier: designId
+  attributes:
+  - name: generations
+    provenance: named
+  - name: name
+    provenance: named
+  - name: archived
+    provenance: named
+    note: The list response carries an archivedCount, so archiving is a real state.
+- name: Generation
+  description: >-
+    One asynchronous render of a design. Created by POST /api/v1/generate and polled to
+    a terminal state. Carries the produced image and the usage/billing record.
+  routes:
+    create: POST /api/v1/generate
+    poll: GET /api/designs/{designId}/generate/{generationId}/status?poll=1
+    get: GET /api/designs/{designId}/generations/{generationId}
+  identifier: generationId
+  attributes:
+  - name: status
+    provenance: named
+    enum: [pending, ideating, generating, visualising, reviewing, refining, completed, failed]
+  - name: imageUrl
+    provenance: named
+    note: Present when completed. Served from a CDN host on tday's download allowlist. tday's own agent instructions tell assistants never to display it.
+  - name: editorUrl
+    provenance: named
+    note: '{webBase}/designs/{designId} — the human-facing surface for a generation.'
+  - name: statusUrl
+    provenance: named
+  - name: completedAt
+    provenance: named
+  - name: failureMessage
+    provenance: named
+  - name: usage
+    provenance: named
+    note: Returned when the generation reaches a terminal state — the billing record for the render.
+- name: Account
+  description: The authenticated tday account, its plan, and its API credit position.
+  routes:
+    get: GET /api/billing/info
+  attributes:
+  - name: account
+    provenance: named
+  - name: auth
+    provenance: named
+  - name: subscription
+    provenance: named
+  - name: usageStats
+    provenance: named
+  - name: freeTier
+    provenance: named
+  - name: apiBalance
+    provenance: named
+    note: >-
+      API credit balance. tday's own /tday-credits skill instructs an agent to divide by
+      1,000,000 if the value is in microdollars, so the balance is a monetary amount.
+relationships:
+- from: Account
+  to: Brand
+  type: has_many
+  via: authenticated account scope
+  note: Brands are listed as "accessible to the authenticated user", and a `role` is returned per brand.
+- from: Account
+  to: Design
+  type: has_many
+  via: authenticated account scope
+- from: Brand
+  to: Design
+  type: has_many
+  via: brandId on generate
+  note: A design is generated against exactly one brand (brandId is required on POST /api/v1/generate).
+- from: Design
+  to: Generation
+  type: has_many
+  via: designId
+- from: Generation
+  to: Design
+  type: belongs_to
+  via: designId
+- from: Generation
+  to: Usage
+  type: has_one
+  via: usage
+  note: Usage is an embedded billing record, not a separately addressable resource.
+entity_count: 4
+relationship_count: 6

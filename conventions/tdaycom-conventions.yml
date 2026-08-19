@@ -1,0 +1,115 @@
+generated: '2026-08-13'
+method: derived
+source: '@designtday/mcp v0.0.1 dist/tools.js + dist/config.js (npm), https://tday.com/mcp'
+summary: >-
+  tday publishes no API reference, so these cross-cutting semantics are read out of the
+  client tday itself ships. Everything below is behaviour the first-party package
+  implements or documents; nothing is inferred from a spec, because there is no spec.
+  The headline finding is a negative one: tday documents no idempotency mechanism and
+  no rate-limit response headers, and its one write operation that costs money
+  (tday_generate_design / POST /api/v1/generate) is not safe to retry.
+authentication:
+  style: bearer-token
+  header: 'authorization: Bearer <token>'
+  token_source: >-
+    Browser OAuth link flow. `npx -y @designtday/mcp install` opens tday.com, the user
+    authorizes the machine, and the token lands in ~/.tday/config.json (0600). A
+    TDAY_TOKEN environment variable overrides the file. The hosted endpoint at
+    /api/mcp uses OAuth 2.1 authorization_code + PKCE (S256) with dynamic client
+    registration and a single `tday` scope.
+  see: authentication/tdaycom-authentication.yml
+idempotency:
+  supported: false
+  idempotency_key_header: null
+  note: >-
+    No Idempotency-Key header, no request-scoped dedupe, and no documented retention
+    window anywhere on the tday surface. tday's own MCP annotations say so explicitly:
+    tday_generate_design and tday_create_brand are declared idempotentHint: false. A
+    retried generate call therefore bills again. Only the read tools and
+    tday_poll_generation declare idempotentHint: true. No `Idempotency` pointer is
+    emitted for this provider.
+pagination:
+  style: limit-offset
+  params:
+  - name: limit
+    in: query
+    type: integer
+    default: 50
+    minimum: 1
+    maximum: 100
+  - name: offset
+    in: query
+    type: integer
+    default: 0
+    minimum: 0
+  response_field: pagination
+  applies_to:
+  - GET /api/brands/summary
+  - GET /api/designs/summary
+  note: Server-side ("API-backed") pagination, not client-side slicing. No cursor or link-header alternative is offered.
+sparse_fields_and_expansion:
+  supported: partial
+  note: >-
+    Not field-level, but there are explicit summary vs detail routes: /api/brands/summary
+    and /api/designs/summary return lightweight list summaries, and /api/brands/{id} and
+    /api/designs/{id} return the full object. tday's tool descriptions tell an agent to
+    list first and only fetch detail when it needs it.
+response_format_negotiation:
+  supported: true
+  scope: mcp-only
+  param: response_format
+  values: [json, markdown]
+  default: json
+  note: >-
+    Every tool accepts an optional response_format that shapes the TEXT payload; JSON
+    stays the default for backward compatibility. structuredContent is always returned
+    to MCP clients that support it. This is an MCP-layer convention, not an HTTP
+    content-negotiation one.
+async_and_long_running:
+  pattern: submit-then-poll
+  submit: POST /api/v1/generate -> { designId, generationId, status, editorUrl, statusUrl }
+  poll: GET /api/designs/{designId}/generate/{generationId}/status?poll=1
+  terminal_states: [completed, failed]
+  intermediate_states: [pending, ideating, generating, visualising, reviewing, refining]
+  typical_duration: 30-90 seconds (tday's own agent instructions)
+  note: No webhook or callback is offered for completion; polling is the only completion signal.
+versioning:
+  scheme: mixed
+  note: >-
+    One route carries a version segment (POST /api/v1/generate); every other route is
+    unversioned (/api/brands, /api/designs, /api/billing/info). No versioning policy,
+    no version header, and no dated-version scheme is published.
+  see: lifecycle/tdaycom-lifecycle.yml
+error_envelope:
+  format: vendor-json
+  rfc9457: false
+  shape: '{"error": "<message>"}'
+  alternate_key: message
+  note: >-
+    The client reads `error` first and falls back to `message`; anything else is
+    surfaced as raw text. Not application/problem+json — no type/title/status/detail.
+  see: errors/tdaycom-problem-types.yml
+rate_limit_signaling:
+  status_on_exhaustion: 429
+  headers_published: []
+  retry_after: undocumented
+  note: >-
+    tday documents no X-RateLimit-*, RateLimit-* or Retry-After response headers. The
+    only published runtime signal is the 429 status plus tday's own remediation text,
+    which points at two distinct exhaustion causes — an API credit balance and an
+    account rate-limit window — with no way for an agent to tell which one it hit or
+    when to retry, beyond calling tday_whoami to read apiBalance.
+  see: rate-limits/tdaycom-rate-limits.yml
+request_id_tracing:
+  supported: false
+  note: No request-id or correlation-id header is documented or read back by the first-party client.
+timeouts:
+  post_ms: 120000
+  get_ms: 30000
+  note: Client-side timeouts in the first-party package; server-side limits are not published.
+input_validation:
+  id_pattern: '^[a-zA-Z0-9_-]+$'
+  note: >-
+    All IDs are validated client-side against a safe-character pattern before being
+    interpolated into a path, and tool argument objects are strict (unknown keys
+    rejected). Text payloads are capped at 25,000 characters.

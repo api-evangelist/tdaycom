@@ -1,0 +1,20 @@
+generated: '2026-08-13'
+method: searched
+source: https://tday.com/changelog
+url: https://tday.com/changelog
+scheme: dated-entries
+current_version: null
+entry_count: 0
+entries: []
+note: >-
+  tday ships a changelog page and a newsroom, and both are live and empty. /changelog
+  (HTTP 200) renders "What's new in tday — New features, improvements, and fixes shipped
+  to production" above the empty state "No updates published yet." /news (HTTP 200)
+  renders "Newsroom — Product notes, launches, and the making of tday" above "No stories
+  published yet." Recording zero entries is the finding: the scaffolding is deployed and
+  nothing has been published to it as of 2026-08-13. The only dated release artifact tday
+  has published anywhere is the npm package @designtday/mcp, last released 2026-05-07.
+related:
+  news_url: https://tday.com/news
+  news_entry_count: 0
+  package_release_feed: https://registry.npmjs.org/@designtday/mcp

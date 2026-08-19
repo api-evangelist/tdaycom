@@ -1,0 +1,104 @@
+generated: '2026-08-13'
+method: derived
+source: '@designtday/mcp v0.0.1 dist/tools.js (npm), cross-referenced with mcp/tdaycom-mcp.yml'
+summary: >-
+  tday publishes no OpenAPI, so this crosswalk cannot bind tools to operationIds. It
+  binds them to the REST routes each tool handler actually calls instead. Those routes
+  are not guessed: they are the literal fetch paths in tday's own first-party npm
+  package, issued against the configured API base (default https://tday.com) with an
+  `authorization: Bearer <token>` header. Because there is no published contract for
+  the REST surface, every row is confidence: high on the BINDING and the REST layer is
+  recorded as undocumented — an agent should call the MCP tools, not these paths.
+surfaces:
+  openapi: null
+  openapi_note: No OpenAPI, Swagger, GraphQL or AsyncAPI document is published on any tday host (probed 2026-08-13).
+  graphql: null
+  mcp: https://tday.com/api/mcp
+  mcp_gated: true
+  rest_base: https://tday.com
+  rest_documented: false
+crosswalk:
+- tool: tday_whoami
+  category: account
+  rest:
+  - GET /api/billing/info
+  binding: direct
+  confidence: high
+  note: Returns account, auth, subscription, usageStats, freeTier and apiBalance.
+- tool: tday_list_brands
+  category: brands
+  rest:
+  - GET /api/brands/summary?limit&offset
+  binding: direct
+  confidence: high
+- tool: tday_get_brand
+  category: brands
+  rest:
+  - GET /api/brands/{brandId}
+  binding: direct
+  confidence: high
+- tool: tday_create_brand
+  category: brands
+  rest:
+  - POST /api/brands
+  binding: direct
+  confidence: high
+  note: Body is { website, name?, description?, industry? }; the website value is normalized client-side before the call.
+- tool: tday_list_designs
+  category: designs
+  rest:
+  - GET /api/designs/summary?limit&offset
+  binding: direct
+  confidence: high
+- tool: tday_get_design
+  category: designs
+  rest:
+  - GET /api/designs/{designId}
+  binding: direct
+  confidence: high
+- tool: tday_generate_design
+  category: generation
+  rest:
+  - POST /api/v1/generate
+  binding: direct
+  confidence: high
+  note: >-
+    The only /api/v1/ path in the whole surface; every other route is unversioned.
+    Returns designId, generationId, status, editorUrl and statusUrl. 120s client
+    timeout on POST vs 30s on GET.
+- tool: tday_poll_generation
+  category: generation
+  rest:
+  - GET /api/designs/{designId}/generate/{generationId}/status?poll=1
+  binding: composite
+  confidence: high
+  note: >-
+    The tool reshapes the response — it derives editorUrl as {webBase}/designs/{designId}
+    and lifts the first image URL out of the generation object, so its output is not the
+    raw REST body. A sibling route GET /api/designs/{designId}/generations/{generationId}
+    also appears in the package.
+- tool: tday_download_image
+  category: assets
+  rest: []
+  binding: none
+  confidence: high
+  note: >-
+    Local file write. Fetches an image URL (optionally resolved via the poll route) and
+    saves it to disk. Constrained by an HTTPS host allowlist that includes tday.com,
+    www.tday.com, app.tday.com, cdn.brandfetch.io, asset.brandfetch.io, media.brand.dev,
+    communities.one and video-cdn.communities.one, a 50MB cap, and a
+    write-inside-cwd-only sandbox.
+mcp_only:
+- tool: tday_download_image
+  reason: Client-side file write with a host allowlist and path sandbox; no server operation corresponds to it.
+rest_only:
+- rest: GET /api/designs/{designId}/generations/{generationId}
+  reason: Present in the package but no tool binds to it directly; tday_poll_generation uses the ?poll=1 status route instead.
+coverage:
+  tools: 9
+  tools_bound_to_rest: 8
+  tools_local_only: 1
+  rest_routes_seen: 9
+  rest_routes_unbound: 1
+  operationids_matched: 0
+  operationids_available: 0

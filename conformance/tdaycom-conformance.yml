@@ -1,0 +1,94 @@
+generated: '2026-08-13'
+method: probed
+source: live probes of https://tday.com/.well-known/* (2026-08-13) + @designtday/mcp v0.0.1
+note: >-
+  tday's conformance story is concentrated entirely in its agent-authorization stack,
+  which is genuinely standards-clean, and absent everywhere else. It publishes no
+  OpenAPI, no error standard, and no compliance certifications.
+standards:
+- id: oauth2
+  conforms: true
+  evidence: >-
+    OAuth 2.0 authorization_code grant. https://tday.com/.well-known/oauth-authorization-server
+    returns 200 with issuer, authorization_endpoint, token_endpoint, registration_endpoint,
+    revocation_endpoint, response_types_supported [code] and grant_types_supported
+    [authorization_code].
+- id: oauth2-pkce
+  conforms: true
+  standard: RFC 7636
+  evidence: 'code_challenge_methods_supported: ["S256"] with token_endpoint_auth_methods_supported ["none"] — a public client using PKCE, which is the OAuth 2.1 posture.'
+- id: rfc8414
+  conforms: true
+  standard: OAuth 2.0 Authorization Server Metadata
+  evidence: GET https://tday.com/.well-known/oauth-authorization-server -> 200 application/json (probed 2026-08-13).
+- id: rfc9728
+  conforms: true
+  standard: OAuth 2.0 Protected Resource Metadata
+  evidence: >-
+    GET https://tday.com/.well-known/oauth-protected-resource -> 200, and the
+    resource-scoped variant https://tday.com/.well-known/oauth-protected-resource/api/mcp
+    -> 200 with resource, authorization_servers, bearer_methods_supported ["header"],
+    scopes_supported ["tday"] and resource_name. The 401 from /api/mcp carries the
+    matching WWW-Authenticate: Bearer resource_metadata="..." challenge, which is the
+    part most providers omit.
+- id: rfc7591
+  conforms: true
+  standard: OAuth 2.0 Dynamic Client Registration
+  evidence: registration_endpoint https://tday.com/api/mcp/oauth/register is advertised in the RFC 8414 document.
+- id: rfc7009
+  conforms: true
+  standard: OAuth 2.0 Token Revocation
+  evidence: revocation_endpoint https://tday.com/api/mcp/oauth/revoke is advertised in the RFC 8414 document.
+- id: mcp
+  conforms: true
+  standard: Model Context Protocol
+  evidence: >-
+    Hosted streamable-HTTP server at https://tday.com/api/mcp (Access-Control-Allow-Headers
+    advertises mcp-protocol-version and mcp-session-id), plus a local stdio server in
+    @designtday/mcp built on @modelcontextprotocol/sdk ^1.29.0. Tools declare MCP
+    annotations (readOnlyHint/destructiveHint/idempotentHint/openWorldHint) and return
+    structuredContent, which is above the median for published MCP servers.
+- id: oidc
+  conforms: false
+  evidence: GET https://tday.com/.well-known/openid-configuration -> 404 (probed 2026-08-13). tday's OAuth server is an authorization server only, not an OIDC provider.
+- id: openapi
+  conforms: false
+  evidence: >-
+    No OpenAPI or Swagger document on any tday host. /openapi.json, /openapi.yaml,
+    /swagger.json, /api-docs, /docs, /redoc and /api/openapi.json all return 404 on
+    tday.com (probed 2026-08-13); api.tday.com answers a Cloudflare bot challenge (403).
+- id: rfc9457
+  conforms: false
+  evidence: 'Errors are a bare vendor JSON object {"error": "..."} with no type/title/status/detail and no application/problem+json media type.'
+- id: idempotency
+  conforms: false
+  evidence: >-
+    No Idempotency-Key header or equivalent anywhere on the surface. tday's own MCP
+    annotations declare its two write tools idempotentHint:false.
+- id: pagination
+  conforms: true
+  evidence: Consistent server-side limit/offset on both list routes (limit 1-100 default 50, offset >=0 default 0) with a `pagination` object in the response.
+- id: rfc9116
+  conforms: false
+  standard: security.txt
+  evidence: GET https://tday.com/.well-known/security.txt -> 404 (probed 2026-08-13).
+- id: rfc9727
+  conforms: false
+  standard: api-catalog
+  evidence: GET https://tday.com/.well-known/api-catalog -> 404 (probed 2026-08-13).
+- id: a2a
+  conforms: false
+  standard: A2A Agent Card
+  evidence: /.well-known/agent-card.json and /.well-known/agent.json both 404 on tday.com (probed 2026-08-13).
+- id: llmstxt
+  conforms: false
+  evidence: GET https://tday.com/llms.txt -> 404 (probed 2026-08-13).
+- id: soc2
+  conforms: false
+  evidence: >-
+    SOC 2 appears on https://tday.com/pricing only as a feature of the unpriced "Scale"
+    tier ("SSO, audit logs, SOC 2"), i.e. something a customer would get, not a
+    certification tday states it holds. No trust center, no audit report, no ISO 27001,
+    PCI, HIPAA or FedRAMP claim was found. No Compliance pointer is emitted.
+conforms_count: 9
+fails_count: 8

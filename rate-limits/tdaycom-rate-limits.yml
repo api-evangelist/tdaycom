@@ -1,0 +1,43 @@
+generated: '2026-08-13'
+method: derived
+source: '@designtday/mcp v0.0.1 dist/tools.js formatHttpError() (npm)'
+docs: null
+limit_count: 0
+summary: >-
+  tday publishes no numeric rate limit anywhere. There is no rate-limit section in any
+  public page, and the API itself is undocumented. What DOES exist is a confirmed 429
+  path with tday-authored remediation text, recorded below — so the honest reading is
+  "rate limiting exists and is enforced, but every number and every response header is
+  unpublished."
+limits: []
+exhaustion:
+  status_code: 429
+  causes:
+  - api-credit-balance-exhausted
+  - api-rate-limit-window-exhausted
+  disambiguation: none
+  note: >-
+    tday's own error text for 429 is: "MCP/API generation uses the linked account's API
+    credit balance and API rate limit. Run tday_whoami to inspect apiBalance, then buy
+    API credits or wait for the rate-limit window to reset." Two distinct conditions
+    share one status with nothing in the response to tell them apart. An agent that hits
+    a 429 has to make a second call (tday_whoami) to find out whether waiting will help.
+response_headers:
+  published: []
+  x_ratelimit: false
+  ratelimit_rfc: false
+  retry_after: false
+  note: >-
+    No X-RateLimit-*, no RateLimit-* (RFC 9331 draft), no Retry-After. The first-party
+    client neither reads nor surfaces any rate-limit header, which is strong evidence
+    none is sent. This is the runtime signal an agent actually needs, and it is missing.
+window:
+  published: false
+  note: tday's text refers to "the rate-limit window" without stating its length.
+client_timeouts:
+  post_ms: 120000
+  get_ms: 30000
+  note: Client-side only, from the first-party package — not a server-published limit.
+related:
+  credits: plans/tdaycom-plans-pricing.yml
+  errors: errors/tdaycom-problem-types.yml

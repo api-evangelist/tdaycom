@@ -1,16 +1,28 @@
-generated: '2026-07-21'
+generated: '2026-08-13'
 method: searched
 source: https://tday.com/.well-known/oauth-authorization-server
-docs: https://tday.com/.well-known/oauth-protected-resource
+docs: https://tday.com/mcp
+sources:
+- https://tday.com/.well-known/oauth-authorization-server
+- https://tday.com/.well-known/oauth-protected-resource
+- https://tday.com/.well-known/oauth-protected-resource/api/mcp
+- https://tday.com/mcp
+- '@designtday/mcp v0.0.1 dist/config.js + dist/tools.js (npm)'
 summary:
   types:
   - oauth2
+  - http-bearer
   oauth2_flows:
   - authorizationCode
   api_key_in: []
   note: >-
-    tday has no published OpenAPI; this profile is derived from its live OAuth 2.1
-    discovery metadata (RFC 8414 authorization-server + RFC 9728 protected-resource).
+    tday has no published OpenAPI. This profile combines its live OAuth 2.1 discovery
+    metadata (RFC 8414 + RFC 9728) with the token handling documented and implemented in
+    its own first-party npm client. Two authentication paths exist and they terminate in
+    the same place: an OAuth 2.1 authorization-code + PKCE flow for the hosted MCP
+    endpoint, and a browser-linked bearer token written to local disk for the stdio MCP
+    server and CLI. There is no API-key issuance surface at all — no key page, no key
+    prefix, no header alternative.
 schemes:
 - name: OAuth2
   type: oauth2
@@ -29,6 +41,38 @@ schemes:
   - tday
   protects:
   - https://tday.com/api/mcp
+  challenge: 'WWW-Authenticate: Bearer resource_metadata="https://tday.com/.well-known/oauth-protected-resource/api/mcp"'
+  used_by:
+  - Claude custom connector / remote MCP clients
   sources:
   - well-known/tdaycom-oauth-authorization-server.json
   - well-known/tdaycom-oauth-protected-resource.json
+- name: BearerToken
+  type: http
+  scheme: bearer
+  header: authorization
+  format: 'Bearer <token>'
+  token_prefix: none-published
+  protects:
+  - https://tday.com/api/*
+  issuance: >-
+    Not self-serve from a dashboard key page. `npx -y @designtday/mcp install` opens
+    tday.com in the browser on a loopback callback bound to 127.0.0.1 with a random
+    `state` nonce; the user signs in and authorizes the machine, and the token is written
+    to ~/.tday/config.json with 0600 permissions. TDAY_TOKEN in the environment
+    overrides the file.
+  revocation: Revocable from tday integrations/settings, per https://tday.com/mcp.
+  used_by:
+  - '@designtday/mcp local stdio server'
+  - '@designtday/mcp one-shot CLI (`call`)'
+  sources:
+  - '@designtday/mcp v0.0.1 dist/config.js'
+  - '@designtday/mcp v0.0.1 dist/tools.js'
+unauthenticated_behavior:
+  endpoint: https://tday.com/api/mcp
+  status: 401
+  body: '{"error":"Unauthorized"}'
+  checked: '2026-08-13'
+mfa_sso:
+  sso_published: false
+  note: SSO appears on https://tday.com/pricing only as a feature of the unpriced Scale tier, not as a documented, available authentication option.

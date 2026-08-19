@@ -1,6 +1,11 @@
-generated: '2026-07-21'
+generated: '2026-08-13'
 method: searched
-source: https://tday.com/.well-known/oauth-protected-resource
+source: https://tday.com/mcp
+sources:
+- https://tday.com/mcp
+- https://tday.com/.well-known/oauth-protected-resource
+- https://tday.com/.well-known/oauth-authorization-server
+- https://registry.npmjs.org/@designtday/mcp
 status: published
 server:
   name: tday
@@ -8,11 +13,13 @@ server:
   url: https://tday.com/api/mcp
   resource_name: tday
   description: >-
-    Official hosted Model Context Protocol server for the tday AI marketing-content
-    platform. It is the agent-facing surface of tday, secured with OAuth 2.1. The
-    endpoint returns HTTP 401 (Unauthorized) to unauthenticated requests, so the tool
-    list is not publicly enumerable; the OAuth discovery documents below are published
-    openly and confirm a live, standards-compliant remote MCP server.
+    Official hosted Model Context Protocol server for tday, the agent-facing surface of
+    the tday design/launch-content platform. tday.com/mcp documents two ways in: a local
+    stdio server installed from npm, and this hosted endpoint used through Claude's
+    custom-connector flow. The hosted endpoint returns HTTP 401 with a
+    WWW-Authenticate: Bearer challenge to unauthenticated requests, so the live tool
+    list is not publicly enumerable — the tools recorded below come from tday's own
+    first-party npm package instead, which is the same tool set.
 auth:
   type: oauth2
   scheme: authorization_code
@@ -28,10 +35,298 @@ auth:
   registration_endpoint: https://tday.com/api/mcp/oauth/register
   revocation_endpoint: https://tday.com/api/mcp/oauth/revoke
   protected_resource_metadata: https://tday.com/.well-known/oauth-protected-resource
+  protected_resource_metadata_scoped: https://tday.com/.well-known/oauth-protected-resource/api/mcp
   authorization_server_metadata: https://tday.com/.well-known/oauth-authorization-server
-tools: []
+  www_authenticate: 'Bearer resource_metadata="https://tday.com/.well-known/oauth-protected-resource/api/mcp"'
+deployment:
+  mode: both
+  endpoint: https://tday.com/api/mcp
+  install: npx -y @designtday/mcp install
+  package: https://www.npmjs.com/package/@designtday/mcp
+  auth: oauth
+  verified: probed
+  note: >-
+    Both surfaces are real and are documented side by side on https://tday.com/mcp.
+    Remote: an https endpoint an MCP client POSTs to, added as a Claude custom
+    connector, probed 2026-08-13 and answering 401 with an RFC 9728 challenge.
+    Local-stdio: `npx -y @designtday/mcp install`, which runs `@designtday/mcp serve`
+    on the user's machine and links it to their tday account through a loopback
+    browser flow. Both paths front the same tools.
+  probe:
+    url: https://tday.com/api/mcp
+    method: POST
+    body: '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
+    http_status: 401
+    response: '{"error":"Unauthorized"}'
+    checked: '2026-08-13'
+tools_source: >-
+  Read verbatim from dist/tools.js in tday's own npm package @designtday/mcp v0.0.1
+  (published 2026-05-07). Names, titles, descriptions, MCP annotations and input
+  parameters are tday's, not ours. The hosted endpoint is auth-gated, so a live
+  tools/list against https://tday.com/api/mcp could not confirm that the hosted tool
+  set is byte-identical to the packaged one.
+tools:
+- name: tday_whoami
+  title: Who am I?
+  description: >-
+    Get the linked tday account identity plus plan, API credit balance, and billing
+    period usage. Use first to verify MCP is connected to the expected user account.
+  annotations:
+    readOnlyHint: true
+    destructiveHint: false
+    idempotentHint: true
+    openWorldHint: true
+  parameters:
+  - name: response_format
+    type: enum
+    values: [json, markdown]
+    default: json
+    required: false
+- name: tday_list_brands
+  title: List brands
+  description: List brands accessible to the authenticated user as lightweight summaries. Supports API-backed limit/offset pagination.
+  annotations:
+    readOnlyHint: true
+    destructiveHint: false
+    idempotentHint: true
+    openWorldHint: true
+  parameters:
+  - name: limit
+    type: integer
+    minimum: 1
+    maximum: 100
+    default: 50
+    required: false
+  - name: offset
+    type: integer
+    minimum: 0
+    default: 0
+    required: false
+  - name: response_format
+    type: enum
+    values: [json, markdown]
+    default: json
+    required: false
+- name: tday_get_brand
+  title: Get brand
+  description: >-
+    Fetch a single brand with its colors, logos, fonts, images, and knowledge base. Use
+    after tday_list_brands when detailed brand context is needed.
+  annotations:
+    readOnlyHint: true
+    destructiveHint: false
+    idempotentHint: true
+    openWorldHint: true
+  parameters:
+  - name: brandId
+    type: string
+    required: true
+    pattern: '^[a-zA-Z0-9_-]+$'
+    description: Brand ID from tday
+  - name: response_format
+    type: enum
+    values: [json, markdown]
+    default: json
+    required: false
+- name: tday_list_designs
+  title: List designs
+  description: List the authenticated user's designs as lightweight summaries. Supports API-backed limit/offset pagination.
+  annotations:
+    readOnlyHint: true
+    destructiveHint: false
+    idempotentHint: true
+    openWorldHint: true
+  parameters:
+  - name: limit
+    type: integer
+    minimum: 1
+    maximum: 100
+    default: 50
+    required: false
+  - name: offset
+    type: integer
+    minimum: 0
+    default: 0
+    required: false
+  - name: response_format
+    type: enum
+    values: [json, markdown]
+    default: json
+    required: false
+- name: tday_get_design
+  title: Get design
+  description: >-
+    Fetch a single design by id, including its generations. Use after tday_list_designs
+    when generation IDs or full design details are needed.
+  annotations:
+    readOnlyHint: true
+    destructiveHint: false
+    idempotentHint: true
+    openWorldHint: true
+  parameters:
+  - name: designId
+    type: string
+    required: true
+    pattern: '^[a-zA-Z0-9_-]+$'
+    description: Design ID from tday
+  - name: response_format
+    type: enum
+    values: [json, markdown]
+    default: json
+    required: false
+- name: tday_generate_design
+  title: Generate design
+  description: >-
+    Generate a new tday design from a text prompt against a brand. Returns designId and
+    generationId; generation runs asynchronously, so poll tday_poll_generation until
+    completed or failed.
+  annotations:
+    readOnlyHint: false
+    destructiveHint: false
+    idempotentHint: false
+    openWorldHint: true
+  parameters:
+  - name: prompt
+    type: string
+    required: true
+    minLength: 1
+    maxLength: 5000
+    description: Design prompt. Be specific about audience, format, copy, and visual direction.
+  - name: brandId
+    type: string
+    required: true
+    pattern: '^[a-zA-Z0-9_-]+$'
+    description: Brand ID from tday
+  - name: name
+    type: string
+    required: false
+    maxLength: 200
+    description: Short design name
+  - name: response_format
+    type: enum
+    values: [json, markdown]
+    default: json
+    required: false
+- name: tday_poll_generation
+  title: Poll generation
+  description: >-
+    Poll a design generation. Returns status
+    (pending/ideating/generating/visualising/reviewing/refining/completed/failed),
+    editorUrl, imageUrl when completed, and usage when terminal. Call repeatedly until
+    status is completed or failed.
+  annotations:
+    readOnlyHint: true
+    destructiveHint: false
+    idempotentHint: true
+    openWorldHint: true
+  parameters:
+  - name: designId
+    type: string
+    required: true
+    pattern: '^[a-zA-Z0-9_-]+$'
+  - name: generationId
+    type: string
+    required: true
+    pattern: '^[a-zA-Z0-9_-]+$'
+  - name: response_format
+    type: enum
+    values: [json, markdown]
+    default: json
+    required: false
+- name: tday_create_brand
+  title: Create brand
+  description: >-
+    Create a new brand from a website URL. Extracts colors, fonts, and logos
+    automatically from the site. You can also pass a name and description.
+  annotations:
+    readOnlyHint: false
+    destructiveHint: false
+    idempotentHint: false
+    openWorldHint: true
+  parameters:
+  - name: website
+    type: string
+    required: true
+    maxLength: 2048
+    description: Website URL to extract brand assets from, for example stripe.com or https://stripe.com
+  - name: name
+    type: string
+    required: false
+    maxLength: 200
+    description: Brand name, auto-detected from website if omitted
+  - name: description
+    type: string
+    required: false
+    maxLength: 1000
+  - name: industry
+    type: string
+    required: false
+    maxLength: 120
+  - name: response_format
+    type: enum
+    values: [json, markdown]
+    default: json
+    required: false
+- name: tday_download_image
+  title: Download image
+  description: >-
+    Download a completed generated design image to a local file. Pass either imageUrl,
+    or designId + generationId. Writes only inside the current working directory and
+    caps downloads at 50MB.
+  annotations:
+    readOnlyHint: false
+    destructiveHint: true
+    idempotentHint: false
+    openWorldHint: true
+  local_only: true
+  parameters:
+  - name: imageUrl
+    type: string
+    format: url
+    required: false
+  - name: designId
+    type: string
+    required: false
+    pattern: '^[a-zA-Z0-9_-]+$'
+  - name: generationId
+    type: string
+    required: false
+    pattern: '^[a-zA-Z0-9_-]+$'
+  - name: filePath
+    type: string
+    required: true
+    maxLength: 500
+    description: Local path to save the image, relative to cwd, for example ./tday-designs/poster.png
+  - name: overwrite
+    type: boolean
+    default: false
+    required: false
+tool_count: 9
+capabilities_published:
+  source: https://tday.com/mcp
+  list:
+  - Check your plan and credits
+  - List and inspect brands
+  - Create a brand from a website
+  - List previous designs
+  - Generate a new design from a prompt
+  - Poll until the design is ready
+  - Save completed images locally
+clients_supported:
+- Claude Code
+- Claude (custom connector)
+- Cursor
+- Gemini CLI
+- Codex
+security_model:
+  source: https://tday.com/mcp + @designtday/mcp README
+  notes:
+  - MCP access is tied to a tday account and revocable from tday integrations settings.
+  - Local install uses a loopback callback bound to 127.0.0.1 plus a random state nonce.
+  - Local config is written to ~/.tday/config.json with 0600 permissions.
+  - Image downloads are restricted to an HTTPS host allowlist, re-check redirect targets, cap at 50MB, and write only inside the current working directory.
 notes: >-
-  Tools require a valid OAuth bearer token (scope "tday") and could not be listed
-  during discovery. No OpenAPI is published for tday, so a candidate tool list cannot
-  be derived. Discovery confirmed the server, transport (streamable HTTP at
-  /api/mcp), and its complete OAuth 2.1 authorization surface.
+  Round 1 of this pipeline recorded the server as gated with an empty tools[] and
+  deployment mode `remote`. Round 2 corrects both: tday also ships a local-stdio
+  package, so the mode is `both`, and the real nine-tool surface with input schemas
+  and MCP annotations is published by tday itself inside that package.

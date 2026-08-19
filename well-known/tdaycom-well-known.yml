@@ -1,7 +1,8 @@
-generated: '2026-07-21'
+generated: '2026-08-13'
 method: searched
 source: live probe of https://tday.com/.well-known/
 host: https://tday.com
+checked: '2026-08-13'
 documents:
 - path: /.well-known/oauth-authorization-server
   status: 200
@@ -13,6 +14,14 @@ documents:
   file: tdaycom-oauth-protected-resource.json
   standard: RFC 9728
   note: OAuth 2.0 Protected Resource Metadata; resource is https://tday.com/api/mcp.
+- path: /.well-known/oauth-protected-resource/api/mcp
+  status: 200
+  file: tdaycom-oauth-protected-resource-api-mcp.json
+  standard: RFC 9728
+  note: >-
+    Resource-scoped variant, and the exact URL named in the WWW-Authenticate challenge
+    the MCP endpoint returns on a 401. Found in round 2 by reading the challenge header
+    rather than by guessing paths.
 - path: /.well-known/security.txt
   status: 404
   standard: RFC 9116
@@ -24,3 +33,21 @@ documents:
   standard: RFC 9727
 - path: /.well-known/ai-plugin.json
   status: 404
+- path: /.well-known/agent-card.json
+  status: 404
+  standard: A2A 1.0.0
+- path: /.well-known/agent.json
+  status: 404
+  standard: A2A pre-0.3
+hosts_also_probed:
+- host: api.tday.com
+  result: 403 Cloudflare bot challenge on /, 404 on /.well-known/agent-card.json and /llms.txt
+- host: docs.tday.com
+  result: does not resolve
+- host: app.tday.com
+  result: does not resolve
+- host: status.tday.com
+  result: does not resolve
+- host: tday.so
+  result: does not resolve (hello@tday.so is used as a contact address on https://tday.com/security)
+served_count: 3
