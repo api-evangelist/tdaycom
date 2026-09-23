@@ -1,0 +1,25 @@
+# Front Door AI Index — tdaycom — 2026-09-17
+# AI vocabulary counted on the provider's root page. Generated; do not edit.
+# `score` is null unless ownership is `own` — see front_door_ai.py.
+front_door_ai:
+  slug: tdaycom
+  lexicon_version: '1.0'
+  probed_at: '2026-09-17'
+  host: tday.com
+  final_host: tday.com
+  ownership: own
+  owner: tdaycom
+  shares_host_with: null
+  inherited_from: null
+  verdict: scored
+  score: 50
+  host_score: 50
+  density: 29.9
+  words: 1672
+  tiers:
+    agentic: 0
+    core: 50
+    model: 0
+  ambiguous: 0
+  top_terms:
+    AI: 50
