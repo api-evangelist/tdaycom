@@ -57,7 +57,7 @@ tags:
 - Content Generation
 - Design
 - Video
-- Social-Media
+- Social Media
 - Developer Tools
 - MCP
 - Agents
@@ -74,6 +74,7 @@ tags_raw:
 - MCP
 - Agents
 - Y Combinator
+- Social-Media
 image: https://tday.com/logo.svg
 apis:
 - name: tday MCP Server
