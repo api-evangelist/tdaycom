@@ -89,3 +89,29 @@ counting_rules:
   answer: One finished, ship-ready cut of one flow. Re-recording it after a UI change doesn't count.
 - question: What happens when I outgrow a plan?
   answer: Upgrade any time, prorated.
+x-canonical:
+  generated: '2026-10-08'
+  vocabulary: all/0-working/economics/plans-canonical.yml
+  models:
+  - hybrid
+  - negotiated
+  units: []
+  plans:
+  - name: Starter
+    access: other
+    model: hybrid
+    model_how: derived
+    units: []
+    periods: []
+  - name: Growth
+    access: other
+    model: hybrid
+    model_how: derived
+    units: []
+    periods: []
+  - name: Scale
+    access: other
+    model: negotiated
+    model_how: derived
+    units: []
+    periods: []
