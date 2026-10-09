@@ -320,3 +320,19 @@ notes: 'Round 1 of this pipeline recorded the server as gated with an empty tool
   `remote`. Round 2 corrects both: tday also ships a local-stdio package, so the mode is `both`, and the
   real nine-tool surface with input schemas and MCP annotations is published by tday itself inside that
   package.'
+rfc9728:
+  endpoint: https://tday.com/api/mcp
+  metadata_url: https://tday.com/.well-known/oauth-protected-resource/api/mcp
+  discovered_via: WWW-Authenticate resource_metadata on an anonymous POST initialize
+  fetched: '2026-09-25'
+  http_status: 200
+  content_type: application/json
+  document:
+    resource: https://tday.com/api/mcp
+    authorization_servers:
+    - https://tday.com
+    scopes_supported:
+    - tday
+    bearer_methods_supported:
+    - header
+    resource_name: tday
